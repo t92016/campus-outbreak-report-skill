@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>○○國小 校園通報系統 <!-- TODO: 換成貴校名稱 --></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #f6f8f1;
+            font-family: "Noto Sans TC", "Microsoft JhengHei", "Helvetica Neue", Arial, sans-serif;
+        }
+
+        /* 導覽列 */
+        nav.navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #8fae7f, #6b9a70);
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 20px;
+            height: 60px;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li { margin: 0 5px; }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.05rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .hamburger-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 5px;
+            z-index: 1001;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            z-index: 999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+
+        .menu-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* iframe 滿版容器 */
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+            padding-top: 60px; /* 讓內容從導覽列下方開始 */
+        }
+
+        .iframeTable {
+            flex-grow: 1;
+            width: 100%;
+            background: #fff;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .iframeTable iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        @media (max-width: 914px) {
+            .hamburger-toggle { display: block; }
+
+            .nav-links {
+                position: fixed;
+                top: 65px;
+                right: 15px;
+                width: 200px;
+                background-color: #fff;
+                border-radius: 12px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+                flex-direction: column;
+                padding: 8px 0;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-15px);
+                transition: all 0.3s ease;
+            }
+
+            .nav-links.is-open {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+
+            .nav-links a {
+                color: #3d4033;
+                padding: 14px 20px;
+                display: block;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-overlay" id="menu-overlay"></div>
+    <nav class="navbar">
+        <button class="hamburger-toggle" id="menu-toggle" aria-label="Toggle navigation menu">
+            ☰
+        </button>
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="https://TODO-換成你的帳號.github.io/" id="home-link">首頁</a></li>
+            <li><a href="TODO_換成你的Google表單網址" target="_blank" rel="noopener noreferrer">導師通報</a></li>
+            <li><a href="TODO_換成你的GAS_WebApp網址?page=triage" target="_blank" rel="noopener noreferrer">檢傷組通報</a></li>
+            <li><a href="TODO_換成你的GAS_WebApp網址?page=rest" target="_blank" rel="noopener noreferrer">休息組通報</a></li>
+            <li><a href="TODO_換成你的GAS_WebApp網址?page=hospital" target="_blank" rel="noopener noreferrer">送醫組通報</a></li>
+            <li><a href="TODO_換成你的GAS_WebApp網址?page=admin" target="_blank" rel="noopener noreferrer">管理者登入</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-wrapper">
+        <div class="iframeTable">
+            <iframe
+                id="content-frame"
+                src="TODO_換成你的GAS_WebApp網址"
+                allowfullscreen
+                sandbox="allow-forms allow-scripts allow-same-origin allow-modals allow-popups"
+                >
+            </iframe>
+        </div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        const overlay = document.getElementById('menu-overlay');
+
+        function closeMenu() {
+            navMenu.classList.remove('is-open');
+            overlay.classList.remove('active');
+            menuToggle.textContent = '☰';
+        }
+
+        function openMenu() {
+            navMenu.classList.add('is-open');
+            overlay.classList.add('active');
+            menuToggle.textContent = '✕';
+        }
+
+        menuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (navMenu.classList.contains('is-open')) {
+                closeMenu();
+            } else {
+                openMenu();
+            }
+        });
+
+        overlay.addEventListener('click', closeMenu);
+
+        navMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.getComputedStyle(menuToggle).display !== 'none') {
+                    closeMenu();
+                }
+            });
+        });
+
+        // 「首頁」連結：不要真的整頁跳轉，改成把 iframe 重新指回首頁網址即可（避免整頁重新載入）
+        document.getElementById('home-link').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.getElementById('content-frame').src =
+                "TODO_換成你的GAS_WebApp網址";
+        });
+    </script>
+</body>
+</html>
